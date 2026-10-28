@@ -1,0 +1,180 @@
+
+``` vhdl
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity PWM is
+    generic(
+        upper : integer := 9;
+        lower : integer := 0;
+        DIV_CNT : integer := 100000000/30
+    );
+    port(
+        rst      : in  STD_LOGIC;
+        clk      : in  STD_LOGIC; 
+        q        : out STD_LOGIC_VECTOR(3 downto 0);
+        pwm_out  : out STD_LOGIC  
+    );
+end PWM;
+
+architecture Behavioral of PWM is
+    type counter_state is (counter1, counter2);
+    signal now_state, next_state : counter_state;
+    signal Qn, Qn_d : integer := lower;
+    
+    signal slow_clk : STD_LOGIC := '0'; 
+    
+    constant SLOW_DIV_MAX : integer := DIV_CNT / 10; 
+    
+    signal div_counter : integer range 0 to SLOW_DIV_MAX := 0;
+    signal pwm_cnt     : integer range 0 to upper := 0;
+begin
+
+    process(clk, rst)
+    begin
+        if rst = '1' then
+            slow_clk <= '0';
+        elsif rising_edge(clk) then
+            if div_counter = SLOW_DIV_MAX - 1 then
+                slow_clk <= not slow_clk;
+            end if;
+        end if;
+    end process;
+
+    process(clk, rst)
+    begin
+        if rst = '1' then
+            div_counter <= 0;
+        elsif rising_edge(clk) then
+            if div_counter = SLOW_DIV_MAX - 1 then
+                div_counter <= 0;
+            else
+                div_counter <= div_counter + 1;
+            end if;
+        end if;
+    end process;
+	
+    process(slow_clk, rst)
+    begin
+        if rst = '1' then
+            pwm_cnt <= 0;
+        elsif rising_edge(slow_clk) then
+            if pwm_cnt = upper then
+                pwm_cnt <= 0;
+            else
+                pwm_cnt <= pwm_cnt + 1;
+            end if;
+        end if;
+    end process;
+
+    process(slow_clk, rst)
+    begin
+        if rst = '1' then
+            now_state <= counter1;
+        elsif rising_edge(slow_clk) then
+            if pwm_cnt = upper then
+                now_state <= next_state;
+            end if;
+        end if;
+    end process;
+
+    process(now_state, Qn)
+    begin
+        case now_state is
+            when counter1 =>
+                if Qn >= upper then
+                    next_state <= counter2;
+                else
+                    next_state <= counter1;
+                end if;
+            when counter2 =>
+                if Qn <= lower then
+                    next_state <= counter1;
+                else
+                    next_state <= counter2;
+                end if;
+        end case;
+    end process;
+
+    process(slow_clk, rst)
+    begin
+        if rst = '1' then
+            Qn <= lower;
+        elsif rising_edge(slow_clk) then
+            if pwm_cnt = upper then
+                case now_state is
+                    when counter1 =>
+                        if Qn < upper then
+                            Qn <= Qn + 1;
+                        end if;
+                    when counter2 =>
+                        if Qn > lower then
+                            Qn <= Qn - 1;
+                        end if;
+                end case;
+            end if;
+        end if;
+    end process;
+
+    process(slow_clk, rst)
+    begin
+        if rst = '1' then
+            Qn_d <= lower;
+        elsif rising_edge(slow_clk) then
+            if pwm_cnt = upper then
+                Qn_d <= Qn;
+            end if;
+        end if;
+    end process;
+
+    process(pwm_cnt, Qn, rst)
+    begin
+        if rst = '1' then
+            pwm_out <= '0';
+        elsif (pwm_cnt < Qn) then
+            pwm_out <= '1';
+        else
+            pwm_out <= '0';
+        end if;
+    end process;
+
+    q <= std_logic_vector(to_unsigned(Qn_d, 4));
+
+end Behavioral;
+
+```
+
+# -------------------------------------------------------------------------
+# �������身雿輻 100 MHz 蝟餌絞�����
+# -------------------------------------------------------------------------
+set_property PACKAGE_PIN Y9 [get_ports clk]
+set_property IOSTANDARD LVCMOS33 [get_ports clk]
+create_clock -period 10.000 -name sys_clk_pin -waveform {0.000 5.000} -add [get_ports clk]
+
+# -------------------------------------------------------------------------
+# ��蔭閮��撠����� Button ����� Switch嚗�
+# -------------------------------------------------------------------------
+set_property PACKAGE_PIN P16 [get_ports rst]
+set_property IOSTANDARD LVCMOS33 [get_ports rst]
+
+# -------------------------------------------------------------------------
+# Q 頛詨嚗�4 雿�����潘�遣霅啣�� 4 憿����� LED嚗�
+# -------------------------------------------------------------------------
+set_property PACKAGE_PIN T22 [get_ports {q[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {q[0]}]
+
+set_property PACKAGE_PIN T21 [get_ports {q[1]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {q[1]}]
+
+set_property PACKAGE_PIN U22 [get_ports {q[2]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {q[2]}]
+
+set_property PACKAGE_PIN U21 [get_ports {q[3]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {q[3]}]
+
+# -------------------------------------------------------------------------
+# PWM 頛詨嚗�� 1 憿� LED嚗靘�撖漁��������������
+# -------------------------------------------------------------------------
+set_property PACKAGE_PIN U14 [get_ports pwm_out]
+set_property IOSTANDARD LVCMOS33 [get_ports pwm_out]
