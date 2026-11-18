@@ -132,7 +132,7 @@ ZC702_VGA_GitHub_Report/
 
 ### 7.2 row / column 計數器
 
-![Vivado row 計數](images/waveform_row.png)
+![Row 計數器波形](1118/waveform_row.png)
 
 在模擬時間約 20 ms 時，row 約 99、column 約 799。這與 16.8 ms/幀、32 μs/列的計數模型相符。
 
