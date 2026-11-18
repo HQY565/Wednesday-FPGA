@@ -126,7 +126,7 @@ ZC702_VGA_GitHub_Report/
 
 ### 7.1 HSYNC 與 RGB 輸出
 
-![Vivado H/V/RGB 波形](images/waveform_hsync_rgb.png)
+![HSYNC 與 RGB 波形](1118/waveform_hsync_rgb.png)
 
 可見 H 出現週期性的低電位脈衝，以及 R/G/B 依掃描座標出現高電位脈衝；截圖只能證明**有訊號切換**，尚未逐像素自動比對整個畫面。
 
