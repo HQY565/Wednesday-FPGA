@@ -126,19 +126,19 @@ ZC702_VGA_GitHub_Report/
 
 ### 7.1 HSYNC 與 RGB 輸出
 
-![HSYNC 與 RGB 波形](1118/waveform_hsync_rgb.png)
+![HSYNC 與 RGB 波形](waveform_hsync_rgb.png)
 
 可見 H 出現週期性的低電位脈衝，以及 R/G/B 依掃描座標出現高電位脈衝；截圖只能證明**有訊號切換**，尚未逐像素自動比對整個畫面。
 
 ### 7.2 row / column 計數器
 
-![Row 計數器波形](1118/waveform_row.png)
+![Row 計數器波形](waveform_row.png)
 
 在模擬時間約 20 ms 時，row 約 99、column 約 799。這與 16.8 ms/幀、32 μs/列的計數模型相符。
 
 ### 7.3 row 240 附近的 RGB
 
-![Row 240 波形](1118/waveform_row_240.png)
+![Row 240 波形](waveform_row_240.png)
 
 放大可觀察 row 由 228 逐步增加到 251，三個色彩訊號隨水平掃描有規律跳變。要嚴格確認每一段圖形的 X 範圍，仍須放大單列並比對 column。
 
