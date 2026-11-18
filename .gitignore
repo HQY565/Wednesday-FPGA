@@ -1,0 +1,23 @@
+# Vivado output and cache
+*.jou
+*.log
+*.str
+.Xil/
+*.cache/
+*.runs/
+*.sim/
+*.gen/
+*.hw/
+*.ip_user_files/
+*.srcs/
+*.xpr
+*.wdb
+*.vcd
+*.bit
+*.bin
+*.elf
+*.xsa
+# Local generated captures
+vga_output.ppm
+vga_output.png
+__pycache__/
