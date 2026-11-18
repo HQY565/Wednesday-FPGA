@@ -138,7 +138,7 @@ ZC702_VGA_GitHub_Report/
 
 ### 7.3 row 240 附近的 RGB
 
-![Vivado row 240 附近波形](images/waveform_row_240.png)
+![Row 240 波形](1118/waveform_row_240.png)
 
 放大可觀察 row 由 228 逐步增加到 251，三個色彩訊號隨水平掃描有規律跳變。要嚴格確認每一段圖形的 X 範圍，仍須放大單列並比對 column。
 
